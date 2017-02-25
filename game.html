@@ -41,7 +41,7 @@
 		canvas.addEventListener('mousemove',
 			function(evt) {
 				var mousePos = calculateMousePos(evt);
-				paddle1Y = mousePos.y;
+				paddle1Y = mousePos.y - PADDLE_HEIGHT/2;
 			});
 	}
 
@@ -52,7 +52,8 @@
 			ballSpeedX = -ballSpeedX;
 		}
 		if(ballX < 0){
-			ballSpeedX = -ballSpeedX;
+			//ballSpeedX = -ballSpeedX;
+			ballReset();
 		}
 		if(ballY > canvas.height){
 			ballSpeedY = -ballSpeedY;
@@ -62,9 +63,14 @@
 		}
 	}
 
+	function ballReset() {
+		ballX = canvas.width/2;
+		ballY = canvas.height/2;
+	}
+
 	function drawEverything() {
 		colorRect(0, 0, canvas.width, canvas.height, 'black');//next line blanks out the screen with black
-		colorRect(0, paddle1Y, 10, 100, 'white'); //draws the left paddle
+		colorRect(0, paddle1Y, 10, PADDLE_HEIGHT, 'white'); //draws the left paddle
 		colorCircle(ballX, ballY, 10 , 'white');
 	}
 
