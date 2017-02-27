@@ -13,9 +13,12 @@
 	var ballY = 50;
 	var ballSpeedX = 10;
 	var ballSpeedY = 4;
+
 	var player1Score = 0;
 	var player2Score = 0;
+	const WINNING_SCORE = 3;
 
+	var showWinScreeen = false;
 
 	var paddle1Y = 250;
 	var paddle2Y = 250;
@@ -51,15 +54,21 @@
 	}
 
 	function computerMovement() {
-		var paddle2YCenter = paddle2Y + PADDLE_HEIGHT/2;
+		var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT/2);
 		if (paddle2YCenter < ballY - 35) {
 			paddle2Y += 6;
-		} else if(paddle2YCenter < ballY + 35){
+		} else if(paddle2YCenter > ballY + 35){
 			paddle2Y -= 6;
 		}
 	}
 
 	function moveEverything() {
+		if (showWinScreeen) {
+			canvasContext.fillStyle = 'white';
+			canvasContext.fillText('click to continue', 100, 100);
+			return;
+		}
+
 		computerMovement();
 		ballX += ballSpeedX;
 		ballY += ballSpeedY;
@@ -67,6 +76,9 @@
 		if(ballX > canvas.width){
 			if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
 				ballSpeedX = -ballSpeedX;
+
+				var deltaY = ballY - (paddle2Y + PADDLE_HEIGHT/2);
+				ballSpeedY = deltaY *0.35;
 			} else{
 				ballReset();
 				player1Score++;
@@ -75,6 +87,9 @@
 		if(ballX < 0){
 			if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
 				ballSpeedX = -ballSpeedX;
+
+				var deltaY = ballY - (paddle1Y + PADDLE_HEIGHT/2);
+				ballSpeedY = deltaY *0.35;
 			} else{
 				ballReset();
 				player2Score++;
@@ -89,6 +104,12 @@
 	}
 
 	function ballReset() {
+		if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+			player1Score = 0;
+			player2Score = 0;
+			showWinScreeen = true;
+		}
+
 		ballSpeedX = -ballSpeedX;
 		ballX = canvas.width/2;
 		ballY = canvas.height/2;
