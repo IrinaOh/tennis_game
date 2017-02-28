@@ -36,6 +36,14 @@
 		};
 	}
 
+	function handleMouseClick(evt) {
+		if (showWinScreeen) {
+			player1Score = 0;
+			player2Score = 0;
+			showWinScreeen = false;
+		}
+	}
+
 	window.onload = function(){
 		canvas = document.getElementById('gameCanvas');
 		canvasContext = canvas.getContext('2d');
@@ -45,6 +53,8 @@
 			moveEverything();
 			drawEverything();
 		},1000/framesPerSecond);
+
+		canvas.addEventListener('mousedown', handleMouseClick);
 
 		canvas.addEventListener('mousemove',
 			function(evt) {
@@ -63,13 +73,9 @@
 	}
 
 	function moveEverything() {
-		if (showWinScreeen) {
-			canvasContext.fillStyle = 'white';
-			canvasContext.fillText('click to continue', 100, 100);
-			return;
-		}
 
 		computerMovement();
+
 		ballX += ballSpeedX;
 		ballY += ballSpeedY;
 
@@ -78,7 +84,7 @@
 				ballSpeedX = -ballSpeedX;
 
 				var deltaY = ballY - (paddle2Y + PADDLE_HEIGHT/2);
-				ballSpeedY = deltaY *0.35;
+				ballSpeedY = deltaY * 0.35;
 			} else{
 				ballReset();
 				player1Score++;
@@ -89,7 +95,7 @@
 				ballSpeedX = -ballSpeedX;
 
 				var deltaY = ballY - (paddle1Y + PADDLE_HEIGHT/2);
-				ballSpeedY = deltaY *0.35;
+				ballSpeedY = deltaY * 0.35;
 			} else{
 				ballReset();
 				player2Score++;
@@ -115,8 +121,29 @@
 		ballY = canvas.height/2;
 	}
 
+	function drawNet() {
+		for (var i = 0; i < canvas.height; i+=40) {
+			colorRect(canvas.width/2 -1, i, 2, 20, 'white');
+		}
+	}
+
 	function drawEverything() {
 		colorRect(0, 0, canvas.width, canvas.height, 'black');//next line blanks out the screen with black
+
+		if (showWinScreeen) {
+			canvasContext.fillStyle = 'white';
+
+			if (player1Score >= WINNING_SCORE) {
+				canvasContext.fillText("Left Player Won!", 350, 250);
+			} else if (player2Score >= WINNING_SCORE) {
+				canvasContext.fillText("Right Player Won!", 350, 250);
+			}
+
+			canvasContext.fillText('click to continue', 350, 500);
+			return;
+		}
+
+		drawNet();
 		colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white'); //draws the left paddle
 		colorRect(canvas.width - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white'); //computer right paddle
 		colorCircle(ballX, ballY, 10 , 'white');
